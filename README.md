@@ -14,6 +14,8 @@ PREDICT'IF is a clairvoyance agency by phone. Its mediums are spiritualists, car
 * Java EE application server : TOMCAT
 
 ## 3. Preview
-![Test Image 4](https://github.com/Adam-Chellaoui/Java_WebApp_Predict-IF/blob/main/images/Home.png)
+##### a) Home
+![Home](https://github.com/Adam-Chellaoui/Java_WebApp_Predict-IF/blob/main/images/Home.png)
 
-
+##### b) Registration Form
+![Form](https://github.com/Adam-Chellaoui/Java_WebApp_Predict-IF/blob/main/images/Form.png)
