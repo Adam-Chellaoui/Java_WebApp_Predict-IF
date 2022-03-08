@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Inscription</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="predictif.css"/>
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    </head>
+    
+    <body>
+        
+        <h1>Créez Votre Compte Prédict'IF</h1>
+        
+        <p id="notification">Veuillez saisir vos informations et valider l'inscription en appuyant sur le bouton.</p>
+        <!-- Champs et Bouton de Formulaire -->
+        Prénom : <br><input type="text" id="champ-prenom" size="40" />
+        <br/>
+        Nom : <br><input type="text" id="champ-nom" />
+        <br/>
+        Date de Naissance : <br><input type="date" id="champ-dateNaissance" />
+        <br/>
+        Mail : <br><input type="text" id="champ-mail" />
+        <br/>
+        Adresse :<br> <input type="text" id="champ-adresse" />
+        <br/>
+        Telephone : <br><input type="text" id="champ-telephone" />
+        <br/>
+        Mot de Passe :<br> <input type="text" id="champ-motPasse" />
+        <br/>
+        Genre : <br><input type="radio" name="genre" value="M" id="genreM" /> 
+        <label>Homme</label>
+        ___________
+        <input type="radio" name="genre" value="F" id="genreF"/>
+        <label>Femme</label>
+        <br/>
+        <br>
+        <button id="bouton-inscription">S'inscrire</button>
+        
+        <script>
+            $(document).ready( function () {
+                $('#bouton-inscription').on( 'click', function () { // Fonction appelée lors du clic sur le bouton
+
+                    console.log("clic sur le bouton d'inscription"); // LOG dans Console Javascript
+                    $('#notification').html("Inscription..."); // Message pour le paragraphe de notification
+
+                    // Récupération de la valeur des champs du formulaire
+                    var champPrenom = $('#champ-prenom').val();
+                    var champNom = $('#champ-nom').val();
+                    var champDate = document.getElementById('champ-dateNaissance').value;
+                    //var dateString= champDate.getDay()+"/"+champDate.getMonth()+"/"+champDate.getYear();
+                    var dateString=champDate.toLocaleString();
+                    var champMail = $('#champ-mail').val();
+                    var champAdresse = $('#champ-adresse').val();
+                    var champTelephone = $('#champ-telephone').val();
+                    var champGenre;
+                    if (document.getElementById('genreM').checked) {
+                        champGenre = document.getElementById('genreM').value;
+                    }
+                    else if (document.getElementById('genreF').checked) {
+                        champGenre = document.getElementById('genreF').value;
+                    }
+                    var champMotPasse = $('#champ-motPasse').val();
+                    // Appel AJAX
+                    $.ajax({
+                        url: './ActionServlet',
+                        method: 'POST',
+                        data: {
+                            todo: 'inscription-client',
+                            prenom: champPrenom,
+                            nom: champNom,
+                            date: dateString,
+                            mail: champMail,
+                            adresse: champAdresse,
+                            telephone: champTelephone,
+                            genre: champGenre,
+                            mdp: champMotPasse,  
+                        },
+                        dataType: 'json'
+                    })
+                    .done( function (response) { // Fonction appelée en cas d'appel AJAX réussi
+                        console.log('Response',response); // LOG dans Console Javascript
+                        if (response.inscription) {
+                            $('#notification').html("Votre compte a bien été crée ! Vous pouvez dès à présent vous connecter pour prendre connaissance de votre profil astral.");
+                            //$('#mail').html(response.client.mail);
+                            // Message pour le paragraphe de notification
+                            // TODO: afficher les informations du client dans la notification
+                            // Exemple: Connexion de Ada Lovelace (ID 1)
+                        }
+                        else {
+                            $('#notification').html("Erreur lors de l'inscription."); // Message pour le paragraphe de notification
+                        }
+                    })
+                    .fail( function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+                        console.log('Error',error); // LOG dans Console Javascript
+                        alert("Erreur lors de l'appel AJAX");
+                    })
+                    .always( function () { // Fonction toujours appelée
+                        
+                    });
+                });
+            });
+        </script>
+        
+        <p><a href="ConnexionClient.html">Aller à la page de Connexion</a></p>
+        <p><a href="index.html">Retour à la page d'Accueil</a></p>
+ 
+    </body>
+</html>

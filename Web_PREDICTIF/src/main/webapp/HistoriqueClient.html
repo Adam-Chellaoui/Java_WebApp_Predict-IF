@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Historique</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="predictif.css"/>
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    </head>
+    
+    <body>
+        <div class="topnav">
+            <a href="index.html">Acceuil</a>
+            <a href="SessionClient.html">Session</a>
+            <a class="active" href="HistoriqueClient.html">Historique</a>
+            <a href="RechercheMedium.html">Recherche Mediums</a>
+            <a href="DeconnexionClient.html">Déconnexion</a>
+        </div>
+        
+        <h1>Votre Historique de Consultations</h1>
+        <br><!-- comment -->
+        <br>
+        
+        <table id="liste-consultations" border="3" width="600" align="center">
+            <thead>
+                <tr>
+                    <th>Médium</th>
+                    <th>Date et Heure</th>
+                    <th>Durée (min)</th>
+                </tr>
+            </thead>
+            <tbody id="body-consultations">
+                
+            </tbody>
+            
+        </table>
+
+        
+        <script>
+            $(document).ready( function () {
+                    console.log("clic sur le bouton de connexion"); // LOG dans Console Javascript
+                    $('#notification').html("Connexion..."); // Message pour le paragraphe de notification
+                    $.ajax({
+                        url: './ActionServlet',
+                        method: 'POST',
+                        data: {
+                            todo: 'historique-client'
+                        },
+                        dataType: 'json'
+                    })
+                    .done( function (response) { // Fonction appelée en cas d'appel AJAX réussi
+                        console.log('Response',response); // LOG dans Console Javascript
+                        var consultations=response.consultations;
+                       
+                        
+                        $.each(consultations,function(index,consultation) {
+                            $('#body-consultations').append(
+                                 '<tr>'+
+                                 '<td>'+consultation.medium+'</td>'+
+                                 '<td>'+consultation.date+'</td>'+
+                                 '<td>'+consultation.duree+'</td>'+
+                                 '</tr>'
+                         );
+                        });    
+                    })
+                    .fail( function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+                        console.log('Error',error); // LOG dans Console Javascript
+                        alert("Erreur lors de l'appel AJAX");
+                    })
+                    .always( function () { // Fonction toujours appelée   
+                    });
+                });
+        </script>
+        
+    </body>
+    
+</html>

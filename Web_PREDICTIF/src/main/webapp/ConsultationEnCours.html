@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Consultation En Cours</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+        <link rel="stylesheet" href="predictif.css"/>
+    </head>
+
+
+    <body>
+
+        <div class="topnav">
+            <a href="index.html">Acceuil</a>
+            <a href="SessionEmploye.html">Session</a>
+            <a class="active" href="ConsultationEnCours.html">Consultation en Cours</a>
+            <a href="Statistiques.html">Statistiques</a>
+            <a href="DeconnexionEmploye.html">Déconnexion</a>
+        </div>
+
+        <h1>Consultation En Cours</h1>
+        <p id="notification"></p>
+        <h2 id="1" style="display:none;" >1. Renseignez-Vous sur le Client</h2>
+        <button id="bouton-historique" style="display:none;">Historique Client</button>
+        <br>
+        <div id="div-historique"></div> 
+        <br>
+        <button id="bouton-profil" style="display:none;">Profil Astral Client</button>
+        <br>
+        <ul id="profil" class="center"></ul>
+        <h2 id="2" style="display:none;" >2. Une fois prêt(e), Notifiez le client et attendez son appel</h2>
+        <button id="bouton-pret" style="display:none;">Prêt(e)</button>
+        <p id="notifier"></p>
+        <h2 id="3" style="display:none;" >3. Indiquez le début de l'appel</h2>
+        <button id="bouton-commencer" style="display:none;">Commencer</button>
+        <p id="consultation-commencee"></p>
+        <h2 id="4" style="display:none;" >4. Aidez-vous en cas de panne d'inspiration</h2>
+        <p id="pAmour" style="display:none;">
+            <label id="amourLabel">Amour</label><br/>
+            <select id="amour">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+            </select>
+        </p>
+        <p id="pSante" style="display:none;">
+            <label id="santeLabel">Santé</label><br/> 
+            <select id="sante">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+            </select>
+        </p>
+        <p id="pTravail" style="display:none;">
+            <label id="travailLabel">Travail</label><br/>
+            <select id="travail">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+            </select>
+        </p>
+        <button id="bouton-predictions" style="display:none;">Demande Prédictions</button>
+        <div class="predictions">
+        <p id="predictions"></p>
+        </div>
+        <h2 id="5" style="display:none;" >5. Ajoutez un commentaire et Terminez l'appel</h2>
+        <div id="cacher-commentaire" style="display:none;">
+            Ajoutez un Commentaire : <br><textarea cols="150" rows="5"" id="commentaire-input" class="center"></textarea>
+            <br/>
+        </div>
+        <button id="bouton-terminer" style="display:none;">Terminer</button>
+        <p id="consultation-terminee"></p>
+
+        <script type="text/javaScript">
+            $('#bouton-historique').on( 'click', function () { // Fonction appelée lors du clic sur le bouton
+            $.ajax({
+            url: './ActionServlet',
+            method: 'POST',
+            data: {
+            todo: 'historique-client-employe'
+            },
+            dataType: 'json'
+            })
+            .done( function (response) { // Fonction appelée en cas d'appel AJAX réussi
+            console.log('Response',response); // LOG dans Console Javascript
+            var consultations=response.consultations;
+            $('#div-historique').append(
+            '<table id="liste-consultations" border="3" width="600" align="center">'+
+            '<thead id="head-consultations">'+
+            '</thead>'+
+            '<tbody id="body-consultations">'+
+            '</tbody>'+
+            '</table>')
+            $('#head-consultations').append(
+            '<tr>'+
+            '<th>Médium</th>'+
+            '<th>Prénom Employé</th>'+
+            '<th>Nom Employé</th>'+
+            '<th>Date</th>'+
+            '<th>Durée (min)</th>'+
+            '<th>Commentaire</th>'+
+            '</tr>'  
+            );
+            $.each(consultations,function(index,consultation) {
+            $('#body-consultations').append(
+            '<tr>'+
+            '<td>'+consultation.medium+'</td>'+
+            '<td>'+consultation.employePrenom+'</td>'+
+            '<td>'+consultation.employeNom+'</td>'+
+            '<td>'+consultation.date+'</td>'+
+            '<td>'+consultation.duree+'</td>'+
+            '<td>'+consultation.commentaire+'</td>'+
+            '</tr>'
+            );
+            });  
+            })
+            .fail( function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+            console.log('Error',error); // LOG dans Console Javascript
+            alert("Erreur lors de l'appel AJAX");
+            })
+            .always( function () { // Fonction toujours appelée
+
+            });
+            });
+
+        </script>
+
+        <script type="text/javaScript">
+            $('#bouton-profil').on( 'click', function () { // Fonction appelée lors du clic sur le bouton
+            $.ajax({
+            url: './ActionServlet',
+            method: 'POST',
+            data: {
+            todo: 'profil-astral'
+            },
+            dataType: 'json'
+            })
+            .done( function (response) { // Fonction appelée en cas d'appel AJAX réussi
+            console.log('Response',response); // LOG dans Console Javascript
+            $('#profil').append(
+            '<li> Signe du Zodiaque : '+response.profil.zodiaque+' </li>'+               
+            '<li> Signe Astrologique Chinois : '+response.profil.chinois+' </li>'+ 
+            '<li> Animal Totem : '+response.profil.animal+' </li>'+ 
+            '<li> Couleur Astrologique : '+response.profil.couleur+' </li>'
+            );
+
+            })  
+
+            .fail( function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+            console.log('Error',error); // LOG dans Console Javascript
+            alert("Erreur lors de l'appel AJAX");
+            }) 
+            .always( function () { // Fonction toujours appelée
+
+            });
+            });
+        </script>
+
+        <script type="text/javaScript">
+            $('#bouton-predictions').on( 'click', function () {
+            var champAmour = document.getElementById("amour").selectedIndex+1;
+            var champSante = document.getElementById("sante").selectedIndex+1;
+            var champTravail = document.getElementById("travail").selectedIndex+1;
+            console.log('amour',champAmour);
+            console.log('sante',champSante);
+            console.log('travail',champTravail);
+            $.ajax({
+            url: './ActionServlet',
+            method: 'POST',
+            data: {
+            todo: 'predictions',
+            amour: champAmour,
+            sante: champSante,
+            travail: champTravail  
+            },
+            dataType: 'json'
+            })
+            .done( function (response) { // Fonction appelée en cas d'appel AJAX réussi
+            console.log('Response',response); // LOG dans Console Javascript
+            $('#predictions').append(
+                    '<p> <strong>Amour :</strong> '+response.predictions.amour+' </p>'+               
+            '<p> <strong>Santé :</strong> '+response.predictions.sante+' </p>'+ 
+            '<p> <strong>Travail :</strong> '+response.predictions.travail+' </p>'
+            );
+
+            })           
+            .fail( function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+            console.log('Error',error); // LOG dans Console Javascript
+            alert("Erreur lors de l'appel AJAX");
+            })
+            .always( function () { // Fonction toujours appelée
+
+            });
+            });
+        </script>
+
+        <script type="text/javaScript">
+            $('#bouton-pret').on( 'click', function () {
+            $.ajax({
+            url: './ActionServlet',
+            method: 'POST',
+            data: {
+            todo: 'notifier-client'
+            },
+            dataType: 'json'
+            })
+            .done( function (response) { // Fonction appelée en cas d'appel AJAX réussi
+            console.log('Response',response); // LOG dans Console Javascript
+            $('#notifier').html("Le client a bien été notifié, il vous appelera bientôt.")
+            })           
+            .fail( function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+            console.log('Error',error); // LOG dans Console Javascript
+            alert("Erreur lors de l'appel AJAX");
+            })
+            .always( function () { // Fonction toujours appelée
+            });
+            });
+        </script>
+
+        <script type="text/javaScript">
+            $('#bouton-terminer').on( 'click', function () {
+            var champ=document.getElementById("commentaire-input").value;
+            $.ajax({
+            url: './ActionServlet',
+            method: 'POST',
+            data: {
+            todo: 'terminer-consultation', 
+            commentaire: champ
+            },
+            dataType: 'json'
+            }).done( function (response) { // Fonction appelée en cas d'appel AJAX réussi
+            console.log('Response',response); // LOG dans Console Javascript
+            $('#consultation-terminee').html("La consultation a bien été terminée.")
+            })           
+            .fail( function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+            console.log('Error',error); // LOG dans Console Javascript
+            alert("Erreur lors de l'appel AJAX");
+            })
+            .always( function () { // Fonction toujours appelée
+            });
+            });
+        </script>
+        
+        <script type="text/javaScript">
+            $('#bouton-commencer').on( 'click', function () {
+            $.ajax({
+            url: './ActionServlet',
+            method: 'POST',
+            data: {
+            todo: 'commencer-consultation'
+            },
+            dataType: 'json'
+            }).done( function (response) { // Fonction appelée en cas d'appel AJAX réussi
+            console.log('Response',response); // LOG dans Console Javascript
+            $('#consultation-commencee').html("La consultation a bien commencée.")
+            })           
+            .fail( function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+            console.log('Error',error); // LOG dans Console Javascript
+            alert("Erreur lors de l'appel AJAX");
+            })
+            .always( function () { // Fonction toujours appelée
+            });
+            });
+        </script> 
+
+
+        <script>
+            $(document).ready(function () {
+
+                $.ajax({
+                    url: './ActionServlet',
+                    method: 'POST',
+                    data: {
+                        todo: 'consultation-encours'
+                    },
+                    dataType: 'json'
+                })
+                        .done(function (response) { // Fonction appelée en cas d'appel AJAX réussi
+                            console.log('Response', response); // LOG dans Console Javascript
+                            if (response.encours) {
+                                $('#notification').html("Vous avez une Consultation à effectuer avec " + response.consultation.prenomClient + " " + response.consultation.nomClient + " en incarnant " + response.consultation.medium + ".");
+                                $('#bouton-historique').css("display","block");
+                                $('#bouton-profil').css("display","block");
+                                $('#bouton-pret').css("display","block");
+                                $('#bouton-commencer').css("display","block");
+                                $('#pAmour').css("display","block");
+                                $('#pSante').css("display","block");
+                                $('#pTravail').css("display","block");
+                                $('#bouton-predictions').css("display","block");
+                                //$('#commentaire').css("display","block");
+                                $('#1').css("display","block");
+                                $('#2').css("display","block");
+                                $('#3').css("display","block");
+                                $('#4').css("display","block");
+                                $('#5').css("display","block");
+                                $('#cacher-commentaire').css("display","block");
+                                $('#bouton-terminer').css("display","block");
+                            } else {
+                                $('#notification').html("Vous n'avez aucune consultation en cours."); // Message pour le paragraphe de notification
+                            }
+                        })
+                        .fail(function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+                            console.log('Error', error); // LOG dans Console Javascript
+                            alert("Erreur lors de l'appel AJAX");
+                        })
+                        .always(function () { // Fonction toujours appelée
+
+                        });
+            });
+
+        </script>
+    </body>
+
+
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Statistiques</title>
+        <!-- Librairie Javascript: jQuery (v3.4.1) -->
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="predictif.css"/>
+
+        <style>
+            table {
+                font-family: arial, sans-serif;
+                border-collapse: collapse;
+                width: 100%;
+            }
+
+            td, th {
+                border: 1px solid #dddddd;
+                text-align: left;
+                padding: 8px;
+            }
+
+            tr:nth-child(even) {
+                background-color: #dddddd;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="topnav">
+            <a href="index.html">Acceuil</a>
+            <a href="SessionEmploye.html">Session</a>
+            <a href="ConsultationEnCours.html">Consultation en Cours</a>
+            <a class="active" href="Statistiques.html">Statistiques</a>
+            <a href="DeconnexionEmploye.html">Déconnexion</a>
+        </div>
+        
+        <h1>Statistiques</h1>
+
+        <section id="containers">
+
+            <div id="top5" class="highcharts-container">
+                <h3>Top 5 des médiums les plus solicités</h3>
+                <table id="top5table">
+                    <thead>
+                        <tr>
+                            <th>Position</th>
+                            <th>Dénomination</th>
+                            <th>Nombre de consultations</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                    <tr></tr>
+                </table>
+            </div>
+            <br>
+            <div id="consultParMedium" class="highcharts-container">
+                <br>
+            </div>
+
+            <div id="clientParEmploye" class="highcharts-container">
+
+            </div>
+
+
+        </section>
+
+        <script src="https://code.highcharts.com/highcharts.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $.ajax({
+                    url: './ActionServlet',
+                    method: 'POST',
+                    data: {
+                        todo: 'statistiques'
+                    },
+                    dataType: 'json'
+                })
+
+                        .done(function (response) { // Fonction appelée en cas d'appel AJAX réussi
+                            console.log('Response', response); // LOG dans Console Javascript
+                            gererMediums(response.mediums);
+                            gererEmployes(response.employes);
+                            gererTop5(response.top5)
+
+                            function gererTop5(top5List) {
+                                top5List.forEach(function (element, i) {
+                                    $('#top5table > tbody:last-child').append("<tr><td>" + (i + 1) + "</td><td>" + element['denomination'] + "</td><td>" + element['nombre-consultations'] + "</td></tr>");
+                                })
+
+                            }
+
+                            function gererMediums(mediumList) {
+                                var MediumsX = new Array();
+                                var MediumsY = new Array();
+                                mediumList.forEach(function (element) {
+                                    MediumsX.push(element['denomination']);
+                                    MediumsY.push(element['nombre-consultations']);
+                                })
+                                var lineChartDataMedium = {
+                                    labels: MediumsX,
+                                    data: MediumsY
+                                };
+                                buildBarChart('consultParMedium', lineChartDataMedium, 'consultations', 'médium');
+                            }
+
+                            function gererEmployes(employesList) {
+                                var EmployesX = new Array();
+                                var EmployesY = new Array();
+                                employesList.forEach(function (element) {
+                                    EmployesX.push(element['prenom'] + ' ' + element['nom']);
+                                    EmployesY.push(element['nombre-consultations']);
+                                })
+                                var lineChartDataEmploye = {
+                                    labels: EmployesX,
+                                    data: EmployesY
+                                };
+                                buildBarChart('clientParEmploye', lineChartDataEmploye, 'clients', 'employé');
+                            }
+
+                            function buildBarChart(container, graphData, element, employe) {
+
+                                Highcharts.chart(container, {
+
+                                    chart: {
+                                        type: 'column'
+                                    },
+                                    title: {
+                                        text: 'Nombre de ' + element + ' par ' + employe
+                                    },
+                                    subtitle: {
+                                        text: 'Source: Prédict IF'
+                                    },
+                                    xAxis: {
+                                        categories: graphData.labels
+                                    },
+                                    yAxis: {
+                                        title: {
+                                            text: 'Nombre de ' + element
+                                        }
+                                    },
+                                    legend: {
+                                        enabled: false
+                                    },
+                                    credits: {
+                                        enabled: false
+                                    },
+                                    series: [{name: 'Données', data: graphData.data}]
+                                });
+                            }
+                        });
+            });
+        </script>
+
+    </body>
+</html>

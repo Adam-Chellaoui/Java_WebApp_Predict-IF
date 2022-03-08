@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Recherche Medium</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="predictif.css"/>
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    </head>
+    
+    
+        <div class="topnav">
+            <a href="index.html">Acceuil</a>
+            <a href="SessionClient.html">Session</a>
+            <a href="HistoriqueClient.html">Historique</a>
+            <a class="active" href="RechercheMedium.html">Recherche Mediums</a>
+            <a href="DeconnexionClient.html">Déconnexion</a>
+        </div>
+        
+        <h1>Recherchez un Médium</h1>
+        
+        <p id="notification"></p>
+        
+        <h2>Nos Astrologues</h2>
+        
+        <table id="liste-astrologues" border="3" width="600" align="center">
+            <thead>
+                <tr>
+                    <th>Dénomination</th>
+                    <th>Présentation</th>
+                    <th>Formation</th>
+                    <th>Promotion</th>
+                    <th>Demander Consultation</th>
+                </tr>
+            </thead>
+            <tbody id="body-astrologues">
+                
+            </tbody>
+            
+        </table>
+        
+        <h2>Nos Spirites</h2>
+        
+        <table id="liste-spirites" border="3" width="600" align="center">
+            <thead>
+                <tr>
+                    <th>Dénomination</th>
+                    <th>Présentation</th>
+                    <th>Support</th>
+                    <th>Demander Consultation</th>
+                </tr>
+            </thead>
+            <tbody id="body-spirites">
+                
+            </tbody>
+            
+        </table>
+        
+        <h2>Nos Cartomanciens</h2>
+        
+        <table id="liste-cartomanciens" border="3" width="600" align="center">
+            <thead>
+                <tr>
+                    <th>Dénomination</th>
+                    <th>Présentation</th>
+                    <th>Demander Consultation</th>
+                </tr>
+            </thead>
+            <tbody id="body-cartomanciens">
+                
+            </tbody>
+            
+        </table>
+        <script type="text/javaScript">
+          
+            function consultation(idMedium) {
+                var idMediumString=idMedium.toString();
+                $.ajax({
+                    url: './ActionServlet',
+                        method: 'POST',
+                        data: {
+                            todo: 'demande-consultation',
+                            medium: idMediumString
+                        },
+                        dataType: 'json'
+                }).done(function (response) {
+                    if (response.demande) {
+                            $('#notification').html("Votre demande de Consultation a été acceptée ! Vous serez bientôt contacté par "+response.consultation.medium+".");
+                        }
+                        else {
+                            $('#notification').html("Votre demande de Consultation a été refusée."); // Message pour le paragraphe de notification
+                        }
+                })
+            }
+        </script>
+        <script>
+            
+            $(document).ready( function () {
+                    console.log("clic sur le bouton de connexion"); // LOG dans Console Javascript
+                    
+                    $.ajax({
+                        url: './ActionServlet',
+                        method: 'POST',
+                        data: {
+                            todo: 'recherche-medium'
+                        },
+                        dataType: 'json'
+                    })
+                    .done( function (response) { // Fonction appelée en cas d'appel AJAX réussi
+                        console.log('Response',response); // LOG dans Console Javascript
+                        var astrologues=response.astrologues;
+                        var spirites=response.spirites;
+                        var cartomanciens=response.cartomanciens;
+                        
+                        $.each(astrologues,function(index,astrologue) {
+                            $('#body-astrologues').append(
+                                 '<tr>'+
+                                 '<td>'+astrologue.denomination+'</td>'+
+                                 '<td>'+astrologue.presentation+'</td>'+
+                                 '<td>'+astrologue.formation+'</td>'+
+                                 '<td>'+astrologue.promotion+'</td>'+
+                                 '<td><input type="button" onClick="consultation('+astrologue.id+')" value="Consulter"  /><br />'+'</td>'+
+                                 '</tr>'
+                         );
+                         
+                        });
+                        
+                        $.each(spirites,function(index,spirite) {
+                            $('#body-spirites').append(
+                                 '<tr>'+
+                                 '<td>'+spirite.denomination+'</td>'+
+                                 '<td>'+spirite.presentation+'</td>'+
+                                 '<td>'+spirite.support+'</td>'+
+                                 '<td><input type="button" onClick="consultation('+spirite.id+')" value="Consulter"  /><br />'+'</td>'+
+                                 '</tr>'
+                         );
+                         
+                        });
+                        
+                        $.each(cartomanciens,function(index,cartomancien) {
+                            $('#body-cartomanciens').append(
+                                 '<tr>'+
+                                 '<td>'+cartomancien.denomination+'</td>'+
+                                 '<td>'+cartomancien.presentation+'</td>'+
+                                 '<td><input type="button" onClick="consultation('+cartomancien.id+')" value="Consulter"  /><br />'+'</td>'+
+                                 '</tr>'
+                         );
+                         
+                        });
+                        
+                    })
+                    .fail( function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+                        console.log('Error',error); // LOG dans Console Javascript
+                        alert("Erreur lors de l'appel AJAX");
+                    })
+                    .always( function () { // Fonction toujours appelée
+                        
+                    });
+                });
+            
+        </script>
+        
+    
+    
+</html>

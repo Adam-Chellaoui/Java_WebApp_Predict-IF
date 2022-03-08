@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Ma session</title>
+        <!-- Librairie Javascript: jQuery (v3.4.1) -->
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="predictif.css"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    
+    
+    <body>
+        
+        <div class="topnav">
+            <a href="index.html">Acceuil</a>
+            <a class="active" href="SessionEmploye.html">Session</a>
+            <a href="ConsultationEnCours.html">Consultation en Cours</a>
+            <a href="Statistiques.html">Statistiques</a>
+            <a href="DeconnexionEmploye.html">Déconnexion</a>
+        </div>
+        
+        <h1>Bienvenue sur votre Session</h1>
+        
+        <h3>Vos informations personelles</h3>
+        <br>
+        <div class="center">
+        <ul class="center">
+            <li>Prénom : <span id="prenom"></span></li>
+            <li>Nom : <span id="nom"></span></li>
+            <li>Genre : <span id="genre"></span></li>
+            <li>Email : <span id="mail"></span></li>
+            <li>Téléphone : <span id="telephone"></span></li>
+        </ul>
+        </div>
+        
+        
+        <script>
+            $(document).ready( function () {
+                    $.ajax({
+                        url: './ActionServlet',
+                        method: 'POST',
+                        data: {
+                            todo: 'session-employe'
+                        },
+                        dataType: 'json'
+                    })
+                    .done( function (response) { // Fonction appelée en cas d'appel AJAX réussi
+                        console.log('Response',response); // LOG dans Console Javascript
+                            $('#prenom').html(response.employe.prenom);
+                            $('#nom').html(response.employe.nom);
+                            $('#genre').html(response.employe.genre);
+                            $('#mail').html(response.employe.mail);
+                            $('#telephone').html(response.employe.telephone);
+          
+                    })
+                    .fail( function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+                        console.log('Error',error); // LOG dans Console Javascript
+                        alert("Erreur lors de l'appel AJAX");
+                    })
+                    .always( function () { // Fonction toujours appelée
+                        
+                    });
+                });
+            
+        </script>
+        
+        
+    </body>
+    
+    
+</html>

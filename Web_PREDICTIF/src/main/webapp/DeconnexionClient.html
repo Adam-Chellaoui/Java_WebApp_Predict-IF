@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Déconnexion</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="predictif.css"/>
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    </head>
+    
+    <body>
+        <br>
+        <h1>Page de Déconnexion</h1>
+        <br>
+        <p id="notification"></p>
+        <br>
+        <a href="index.html">Retour vers la page d'Acceuil</a>
+        <script>
+            $(document).ready( function () {
+  
+                    console.log("clic sur le bouton de deconnexion"); // LOG dans Console Javascript
+                    $('#notification').html("Deconnexion..."); // Message pour le paragraphe de notification
+                    $.ajax({
+                        url: './ActionServlet',
+                        method: 'POST',
+                        data: {
+                            todo: 'deconnexion-client'
+                        },
+                        dataType: 'json'
+                    })
+                    .done( function(response){ // Fonction appelée en cas d'appel AJAX réussi
+                        $('#notification').html("Vous avez bien été déconnecté."); // Message pour le paragraphe de notification
+                    })
+                    .fail( function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+                        console.log('Error',error); // LOG dans Console Javascript
+                        alert("Erreur lors de l'appel AJAX");
+                    })
+                    .always( function () { // Fonction toujours appelée
+                        
+                    });
+                });
+            
+        </script>
+    </body>
+</html>
